@@ -1,0 +1,45 @@
+#compdef trash
+
+_trash() {
+    local line state commands
+
+    _arguments -C \
+               '1: :->cmds' \
+               '*::arg:->args'
+    commands=(
+        'list[list files]'
+        'put[put files]'
+        'empty[remove files]'
+        'restore[restore files]'
+    )
+    case "$state" in
+        cmds)
+            _values 'trash commands' "${commands[@]}" 'help[help]'
+            ;;
+        args)
+            local shared ranges
+            shared=(
+                '--older[filter by time]'
+                '--regex[fileter by regex]'
+            )
+            ranges='--ranges[filter by range]'
+            case $line[1] in
+                list)
+                    _values 'trash list' "${shared[@]}"
+                    ;;
+                put)
+                    _files
+                    ;;
+                empty)
+                    _values 'trash empty' "${shared[@]}" "$ranges"
+                    ;;
+                restore)
+                    _values 'trash restore' "${shared[@]}" "$ranges"
+                    ;;
+                help)
+                    _values 'trash help' "${commands[@]}"
+                    ;;
+            esac
+            ;;
+    esac
+}
